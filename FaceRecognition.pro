@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    test.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    test.h
 
 FORMS += \
     mainwindow.ui
@@ -26,3 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 INCLUDEPATH+=E:\opencv\build\install\include\opencv2\
              E:\opencv\build\install\include
 LIBS += -L E:\opencv\build\install\x64\mingw\lib\libopencv_*.a
+
+INCLUDEPATH+=E:\opencv\onnxruntime-win-x64-1.20.1\onnxruntime-win-x64-1.20.1\include
+
+LIBS += -L E:\opencv\onnxruntime-win-x64-1.20.1\onnxruntime-win-x64-1.20.1\lib\onnxruntime.lib

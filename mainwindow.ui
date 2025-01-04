@@ -19,8 +19,8 @@
      <rect>
       <x>40</x>
       <y>60</y>
-      <width>451</width>
-      <height>451</height>
+      <width>400</width>
+      <height>380</height>
      </rect>
     </property>
     <property name="text">
@@ -30,21 +30,21 @@
    <widget class="QLabel" name="result">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>80</y>
-      <width>231</width>
-      <height>291</height>
+      <x>540</x>
+      <y>50</y>
+      <width>400</width>
+      <height>380</height>
      </rect>
     </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;result&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>470</y>
+      <x>350</x>
+      <y>540</y>
       <width>195</width>
       <height>30</height>
      </rect>
@@ -65,6 +65,19 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="loadModelButton">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>540</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
    </widget>
   </widget>
  </widget>
