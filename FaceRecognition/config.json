@@ -1,0 +1,4 @@
+{
+  "model_path": "/Users/maitianjun/PycharmProjects/DIPCode/Yolo/src/model/yolov8s-face-lindevs.pt",
+  "database_path": "/Users/maitianjun/PycharmProjects/DIPCode/Yolo/faces.db"
+}
