@@ -9,6 +9,7 @@ from keras_facenet import FaceNet
 import sqlite3
 import json
 import os
+import time
 
 
 # 加载配置文件
@@ -34,9 +35,13 @@ facenet_model = FaceNet()
 
 def detect_faces(frame):
     """检测人脸并返回人脸框坐标"""
+    start_time = time.time()
     results = model(frame)
     detections = results[0].boxes.xyxy.cpu().numpy()  # 转为 NumPy 格式
+    detection_time = time.time() - start_time
+    print(f"Detection time: {detection_time:.4f}s")
     return detections  # 返回所有检测到的框
+
 
 def extract_features(face_image):
     """
@@ -44,8 +49,12 @@ def extract_features(face_image):
     :param face_image: 裁剪后的人脸图像（RGB 格式）
     :return: 特征向量（512 维）
     """
+    start_time = time.time()
     embeddings = facenet_model.embeddings([face_image])
+    feature_extraction_time = time.time() - start_time
+    print(f"Feature extraction time: {feature_extraction_time:.4f}s")
     return embeddings[0]
+
 
 def initialize_database(db_path=db_path):
     """初始化数据库，创建表格"""
@@ -126,6 +135,7 @@ def match_face(new_embedding, db_path=db_path, threshold=0.6):
     :param threshold: 匹配的相似度阈值
     :return: 匹配到的名字和相似度（如果未匹配，返回 None）
     """
+    start_time = time.time()
     faces = load_faces(db_path)
     best_match = None
     highest_similarity = -1
@@ -136,6 +146,8 @@ def match_face(new_embedding, db_path=db_path, threshold=0.6):
             highest_similarity = similarity
             best_match = name
 
+    matching_time = time.time() - start_time
+    print(f"Matching time: {matching_time:.4f}s")
     if highest_similarity >= threshold:
         return best_match, highest_similarity
     else:
@@ -156,6 +168,12 @@ class FaceRecognitionThread(QThread):
             ret, frame = self.cap.read()
             if not ret:
                 break
+
+            # 获取当前时间
+            start_time = time.time()
+
+            # 进行图像预处理
+            frame = self.preprocess_image(frame)
 
             labels = []  # 存储多个标签的列表
             # 检测人脸
@@ -183,10 +201,39 @@ class FaceRecognitionThread(QThread):
             # 发出标签更新信号
             self.update_label_signal.emit(labels)
 
+            # 总时间
+            total_time = time.time() - start_time
+
+            print(f"Total time: {total_time:.4f}s")
+
     def stop(self):
         """停止线程并释放摄像头"""
         self.running = False  # 设置 running 为 False，停止线程
         self.cap.release()
+
+    def preprocess_image(self, frame):
+        """应用图像预处理步骤"""
+        # 1. 直方图均衡化
+        # 对每个通道进行均衡化
+        for i in range(3):  # 针对 B, G, R 通道
+            channel = frame[:, :, i]
+            frame[:, :, i] = cv2.equalizeHist(channel)
+
+        # 2. 高斯滤波
+        # 在彩色图像上应用高斯滤波
+        frame = cv2.GaussianBlur(frame, (5, 5), 0)
+
+        # 3. 拉普拉斯锐化
+        # 分别对每个通道进行拉普拉斯锐化
+        for i in range(3):
+            channel = frame[:, :, i]
+            laplacian = cv2.Laplacian(channel, cv2.CV_64F)
+            laplacian = cv2.convertScaleAbs(laplacian)  # 处理负值
+            frame[:, :, i] = cv2.add(frame[:, :, i], laplacian)
+
+        return frame
+
+
 
 
 class FaceRecognitionApp(QWidget):
